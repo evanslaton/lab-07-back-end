@@ -30,8 +30,8 @@ app.get('/location', (request, response) => {
     })
 })
 
-app.get('/weather', (requst, response) => {
-  const url = `https://api.darksky.net/forecast/${process.env.DARK_SKY_API_KEY}/${location.query.data.latitude},${location.query.data.latitude}`;
+app.get('/weather', (request, response) => {
+  const url = `https://api.darksky.net/forecast/${process.env.DARK_SKY_API_KEY}/${request.query.data.latitude},${request.query.data.longitude}`;
   return superagent.get(url)
     .then(result => {
       const weatherSummaries = [];
