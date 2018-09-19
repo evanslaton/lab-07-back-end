@@ -31,14 +31,14 @@ app.get('/location', (request, response) => {
 })
 
 app.get('/weather', (requst, response) => {
-  const url = `https://api.darksky.net/forecast/${processe.env.DARK_SKY_API_KEY}/${location.query.data.latitude},${location.query.data.latitude}`;
+  const url = `https://api.darksky.net/forecast/${process.env.DARK_SKY_API_KEY}/${location.query.data.latitude},${location.query.data.latitude}`;
   return superagent.get(url)
     .then(result => {
       const weatherSummaries = [];
       result.body.daily.data.forEach( day => {
         const weather = new Weather(day);
         weatherSummaries.push(weather);
-      });      
+      });
       response.send(weatherSummaries);
     })
     .catch (error => handleError(error, response));
