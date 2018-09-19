@@ -33,6 +33,10 @@ app.get('/location', (request, response) => {
     })
 })
 
+app.get('/weather', (requst, response) => {
+  
+})
+
 // Creates Weather object
 function Weather(day) {
   this.time = new Date(day.time * 1000).toString().slice(0, 15);
