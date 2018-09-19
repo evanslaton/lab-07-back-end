@@ -22,18 +22,23 @@ app.get('/location', (request, response) => {
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${request.query.data}&key=${process.env.GOOGLE_API_KEY}`;
   return superagent.get(url)
     .then(result => {
+
       // Creates an object containing the data to return to the client
-      const location = {
-        search_query: request.query.data, // The user's input
-        formatted_query: result.body.results[0].formatted_address, // City, state and country of the user's input
-        latitude: result.body.results[0].geometry.location.lat, // Latitude of the user's input
-        longitude: result.body.results[0].geometry.location.lng // Longitude of the user's input
-      }
+      const location = new GoogleMap(request, result);
+
       response.send(location);
     })
 })
 
-// Creates Weather object
+// Creates location object
+function GoogleMap(request, result) {
+  this.search_query = request.query.data;
+  this.formatted_query = result.body.results[0].formatted_address;
+  this.latitude = result.body.results[0].geometry.location.lat;
+  this.longitude = result.body.results[0].geometry.location.lng;
+}
+
+// Creates weather object
 function Weather(day) {
   this.time = new Date(day.time * 1000).toString().slice(0, 15);
   this.forecast = day.summary;
