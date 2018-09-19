@@ -41,7 +41,6 @@ app.get('/weather', (request, response) => {
       });
       response.send(weatherSummaries);
     })
-    .catch (error => handleError(error, response));
 })
 
 
