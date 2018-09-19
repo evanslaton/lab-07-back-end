@@ -43,6 +43,32 @@ app.get('/weather', (request, response) => {
     })
 })
 
+app.get('/weather', (request, response) => {
+  const url = `https://api.darksky.net/forecast/${process.env.DARK_SKY_API_KEY}/${request.query.data.latitude},${request.query.data.longitude}`;
+  return superagent.get(url)
+    .then(result => {
+      const weatherSummaries = [];
+      result.body.daily.data.forEach( day => {
+        const weather = new Weather(day);
+        weatherSummaries.push(weather);
+      });
+      response.send(weatherSummaries);
+    })
+})
+
+app.get('/yelp', (request, response) => {
+  const url = `https://api.yelp.com/v3/businesses/search?location=${request.query.data.search_query}`;
+  superagent.get(url)
+    .set('Authorization', `Bearer ${process.env.YELP_API_KEY}`)
+    .then(result => {
+      const restaurants = result.body.businesses.map((business) => {
+        return new Yelp(business);
+      })
+
+      response.send(restaurants);
+    })
+})
+
 
 
 // Creates location object
@@ -61,11 +87,11 @@ function Weather(day) {
 
 // Creates Yelp object
 function Yelp(data) {
-  this.url = data.business[0].url;
-  this.name = data.business[0].name;
-  this.rating = data.business[0].rating;
-  this.price = data.business[0].price;
-  this.image_url = data.business[0].image_url;
+  this.url = data.url;
+  this.name = data.alias;
+  this.rating = data.rating;
+  this.price = data.price;
+  this.image_url = data.image_url;
 }
 
 // Ceeates The Movide DB object
