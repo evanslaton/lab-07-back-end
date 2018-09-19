@@ -43,7 +43,23 @@ app.get('/weather', (request, response) => {
     })
 })
 
-
+app.get('/yelp', (request, response) => {
+    const url = `https://api.yelp.com/v3/businesses/search?location=${request.query.data.search_query}`;
+    superagent.get(url)
+      .set('Authorization', `Bearer ${process.env.YELP_API_KEY}`)
+      .then(result => {
+    .then(result => {
+      const restaurants = [];
+      for (let i = 0; i < 25; i++)
+        const restaurant = new Yelp(result, i);
+        restaurants.push(restaurants);
+      // result.body.daily.data.forEach( day => {
+      //   const weather = new Weather(day);
+      //   weatherSummaries.push(weather);
+      });
+      response.send(restaurants);
+    })
+})
 
 // Creates location object
 function GoogleMap(request, result) {
@@ -60,12 +76,12 @@ function Weather(day) {
 }
 
 // Creates Yelp object
-function Yelp(data) {
-  this.url = data.business[0].url;
-  this.name = data.business[0].name;
-  this.rating = data.business[0].rating;
-  this.price = data.business[0].price;
-  this.image_url = data.business[0].image_url;
+function Yelp(data, i) {
+  this.url = data.business[i].url;
+  this.name = data.business[i].name;
+  this.rating = data.business[i].rating;
+  this.price = data.business[i].price;
+  this.image_url = data.business[i].image_url;
 }
 
 // Ceeates The Movide DB object
