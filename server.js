@@ -43,19 +43,6 @@ app.get('/weather', (request, response) => {
     })
 })
 
-app.get('/weather', (request, response) => {
-  const url = `https://api.darksky.net/forecast/${process.env.DARK_SKY_API_KEY}/${request.query.data.latitude},${request.query.data.longitude}`;
-  return superagent.get(url)
-    .then(result => {
-      const weatherSummaries = [];
-      result.body.daily.data.forEach( day => {
-        const weather = new Weather(day);
-        weatherSummaries.push(weather);
-      });
-      response.send(weatherSummaries);
-    })
-})
-
 app.get('/yelp', (request, response) => {
   const url = `https://api.yelp.com/v3/businesses/search?location=${request.query.data.search_query}`;
   superagent.get(url)
