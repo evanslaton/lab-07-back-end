@@ -34,11 +34,7 @@ app.get('/weather', (request, response) => {
   const url = `https://api.darksky.net/forecast/${process.env.DARK_SKY_API_KEY}/${request.query.data.latitude},${request.query.data.longitude}`;
   return superagent.get(url)
     .then(result => {
-      const weatherSummaries = [];
-      result.body.daily.data.forEach( day => {
-        const weather = new Weather(day);
-        weatherSummaries.push(weather);
-      });
+      const weatherSummaries = result.body.daily.data.map((day) => new Weather(day));
       response.send(weatherSummaries);
     })
 })
@@ -48,15 +44,25 @@ app.get('/yelp', (request, response) => {
   superagent.get(url)
     .set('Authorization', `Bearer ${process.env.YELP_API_KEY}`)
     .then(result => {
-      const restaurants = result.body.businesses.map((business) => {
-        return new Yelp(business);
-      })
+      const restaurants = result.body.businesses.map((business) => new Yelp(business));
 
       response.send(restaurants);
     })
 })
 
+app.get('/movies', (request, response) => {
+  const url = `https://api.themoviedb.org/3/search/movie/?api_key=${process.env.THE_MOVIE_DB_API_KEY}&language=en-US&page=1&query=${request.query.data.search_query}`;
+  superagent.get(url)
+    .then(result => {
+      // console.log(result.body.results);
+      const movies = result.body.results.map((movie) => {
+        console.log(movie);
+        return new TMDB(movie);
+      });
 
+      response.send(movies);
+    })
+})
 
 // Creates location object
 function GoogleMap(request, result) {
@@ -75,7 +81,7 @@ function Weather(day) {
 // Creates Yelp object
 function Yelp(data) {
   this.url = data.url;
-  this.name = data.alias;
+  this.name = data.name;
   this.rating = data.rating;
   this.price = data.price;
   this.image_url = data.image_url;
@@ -88,7 +94,7 @@ function TMDB(data) {
   this.total_votes = data.vote_count;
   this.average_votes = data.vote_average;
   this.popularity = data.popularity;
-  this.image_url = `https://image.tmdb.org/t/p/w500${data.backdrop_path}`;
-  this. overview = data.overview;
+  this.image_url = `https://image.tmdb.org/t/p/w500${data.poster_path}`;
+  this.overview = data.resultoverview;
 }
 
